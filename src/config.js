@@ -13,7 +13,7 @@ export const config = {
 
   // PHOTO: put your image in the /public folder (e.g. public/photo.jpg)
   // and set this to 'photo.jpg'. Leave empty to show the placeholder.
-  photo: '',
+  photo: 'photo.jpg',
 
   // CONTACT FORM: free key from https://web3forms.com (see README).
   // Until you paste a real key, the form falls back to opening the

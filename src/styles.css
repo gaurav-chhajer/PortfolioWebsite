@@ -383,6 +383,7 @@ h1 {
 .section {
   position: relative;
   padding: 130px 0;
+  overflow-x: clip; /* keeps decorative glows from widening the page on phones */
 }
 .glow {
   position: absolute;
@@ -446,7 +447,8 @@ h1 {
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   overflow: hidden;
-  transition: border-color 0.3s, transform 0.3s;
+  /* hover lift uses the separate "translate" property so it never fights GSAP's "transform" */
+  transition: border-color 0.3s, translate 0.3s;
 }
 .spot::before {
   content: '';
@@ -477,17 +479,60 @@ h1 {
 .photo-wrap {
   max-width: 400px;
 }
+/* a light beam slowly circles the photo frame */
+.photo-frame {
+  position: relative;
+  padding: 2px;
+  overflow: hidden;
+  border-radius: 30px;
+  background: var(--border);
+}
+.photo-frame::before {
+  content: '';
+  position: absolute;
+  inset: -60%;
+  background: conic-gradient(from 0deg, transparent 0 55%, var(--cyan) 75%, var(--violet) 90%, transparent 100%);
+  animation: spin 7s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 .photo {
+  position: relative;
+  z-index: 1;
   aspect-ratio: 4 / 5;
   display: grid;
   place-items: center;
+  overflow: hidden;
   border-radius: 28px;
   background: linear-gradient(160deg, rgba(34, 211, 238, 0.14), rgba(139, 92, 246, 0.22)), var(--surface);
 }
-.photo img {
+.photo-img {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: 50% 16%;
+  transform: scale(1.12);
+}
+.photo-tag {
+  position: absolute;
+  left: 14px;
+  bottom: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(5, 7, 15, 0.62);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text);
 }
 .initials {
   font-family: var(--head);
@@ -540,7 +585,7 @@ h1 {
   padding: 32px 28px;
 }
 .card:hover {
-  transform: translateY(-6px);
+  translate: 0 -6px;
 }
 .num {
   display: block;
@@ -629,7 +674,7 @@ h1 {
   padding: 40px 36px;
 }
 .project:hover {
-  transform: translateY(-6px);
+  translate: 0 -6px;
 }
 .kind {
   font-family: var(--mono);
@@ -698,39 +743,36 @@ h1 {
   align-items: flex-start;
 }
 
-/* Background */
-.bg-grid {
+/* Credentials strip */
+.cred {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  margin-top: 90px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
-.bg-col {
-  padding: 32px 28px;
-}
-.bg-row {
-  padding: 14px 0;
-  border-top: 1px solid var(--border);
+.cred > div {
   display: grid;
   gap: 2px;
-  font-size: 15px;
+  padding: 22px 26px;
 }
-.bg-row:first-of-type {
-  border-top: 0;
-  padding-top: 0;
+.cred > div + div {
+  border-left: 1px solid var(--border);
 }
-.bg-row strong {
+.cred .kind {
+  margin-bottom: 8px;
+}
+.cred strong {
   font-family: var(--head);
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 600;
 }
-.bg-row span {
+.cred span {
+  font-size: 15px;
   color: var(--muted);
-}
-.bg-row em {
-  font-style: normal;
-  font-family: var(--mono);
-  font-size: 12.5px;
-  color: var(--violet);
 }
 
 /* FAQ */
@@ -832,7 +874,7 @@ h1 {
   padding: 20px 24px;
 }
 .contact-card:hover {
-  transform: translateX(6px);
+  translate: 6px 0;
 }
 .label {
   font-family: var(--mono);
@@ -943,8 +985,13 @@ h1 {
   .skills {
     grid-template-columns: repeat(3, 1fr);
   }
-  .bg-grid {
+  .cred {
     grid-template-columns: 1fr;
+    margin-top: 60px;
+  }
+  .cred > div + div {
+    border-left: 0;
+    border-top: 1px solid var(--border);
   }
   .stats {
     grid-template-columns: repeat(2, 1fr);
@@ -1038,7 +1085,8 @@ h1 {
 @media (prefers-reduced-motion: reduce) {
   .marquee-track,
   .pulse,
-  .scroll-cue i {
+  .scroll-cue i,
+  .photo-frame::before {
     animation: none;
   }
   .step {

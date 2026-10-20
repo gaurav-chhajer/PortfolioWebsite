@@ -106,26 +106,10 @@ export const skills = [
   { group: 'Delivery', items: ['Git', 'GitHub Actions', 'CI/CD', 'Docker (fundamentals)'] },
 ]
 
-export const background = [
-  {
-    heading: 'Experience',
-    rows: [
-      ['Android Developer', 'OneBanc Technologies', 'Dec 2025 – Oct 2026'],
-      ['Cloud AI Intern', 'Infosys Springboard', 'Sep – Oct 2025'],
-    ],
-  },
-  {
-    heading: 'Education',
-    rows: [['B.Tech, Computer Science (AI & ML)', 'UPES, Dehradun', '2022 – 2026 · CGPA 8.0']],
-  },
-  {
-    heading: 'Recognition',
-    rows: [
-      ['2nd place, IBM Ice Day Innovation Event', '30+ competing teams', ''],
-      ['Peer-reviewed research paper', 'AI & ML in sustainable healthcare', '2026'],
-      ['40-hour DevOps Bootcamp', 'CI/CD, Git, containers', ''],
-    ],
-  },
+export const credentials = [
+  { label: 'Experience', title: 'Android Developer', detail: 'OneBanc Technologies' },
+  { label: 'Education', title: 'B.Tech CSE (AI & ML)', detail: 'UPES, Dehradun · CGPA 8.0' },
+  { label: 'Recognition', title: '2nd place, IBM Ice Day', detail: 'Published research paper, 2026' },
 ]
 
 export const faq = [

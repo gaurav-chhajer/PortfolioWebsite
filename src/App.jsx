@@ -52,6 +52,7 @@ export default function App() {
     let tick
     let ctx
     let onClick
+    let tiltCleanup
 
     if (!reducedMotion) {
       lenis = new Lenis({ lerp: 0.1 })
@@ -169,6 +170,50 @@ export default function App() {
             scrollTrigger: { trigger: el.parentElement, start: 'top bottom', end: 'bottom top', scrub: true },
           })
         })
+
+        // profile photo: wipe-up reveal, image settles in, gentle parallax, tag fades in
+        if (document.querySelector('.photo-img')) {
+          const trig = { trigger: '.photo-wrap', start: 'top 82%', once: true }
+          gsap.fromTo(
+            '.photo-frame',
+            { clipPath: 'inset(100% 0% 0% 0% round 30px)' },
+            { clipPath: 'inset(0% 0% 0% 0% round 30px)', duration: 1.3, ease: 'power4.out', scrollTrigger: trig },
+          )
+          gsap.fromTo('.photo-img', { scale: 1.45 }, { scale: 1.12, duration: 1.9, ease: 'power3.out', scrollTrigger: trig })
+          gsap.from('.photo-tag', { opacity: 0, y: 14, duration: 0.8, delay: 0.9, ease: 'power3.out', scrollTrigger: trig })
+          gsap.fromTo(
+            '.photo-img',
+            { yPercent: 4 },
+            {
+              yPercent: -4,
+              ease: 'none',
+              scrollTrigger: { trigger: '.photo-wrap', start: 'top bottom', end: 'bottom top', scrub: true },
+            },
+          )
+
+          // soft 3D tilt that follows the pointer (mouse devices only)
+          const frame = document.querySelector('.photo-frame')
+          if (frame && window.matchMedia('(hover: hover)').matches) {
+            gsap.set(frame, { transformPerspective: 900 })
+            const rx = gsap.quickTo(frame, 'rotationX', { duration: 0.6, ease: 'power3.out' })
+            const ry = gsap.quickTo(frame, 'rotationY', { duration: 0.6, ease: 'power3.out' })
+            const move = (e) => {
+              const r = frame.getBoundingClientRect()
+              ry(((e.clientX - r.left) / r.width - 0.5) * 10)
+              rx(-((e.clientY - r.top) / r.height - 0.5) * 10)
+            }
+            const leave = () => {
+              ry(0)
+              rx(0)
+            }
+            frame.addEventListener('pointermove', move)
+            frame.addEventListener('pointerleave', leave)
+            tiltCleanup = () => {
+              frame.removeEventListener('pointermove', move)
+              frame.removeEventListener('pointerleave', leave)
+            }
+          }
+        }
       })
     } else {
       document.documentElement.classList.add('reduced')
@@ -178,6 +223,7 @@ export default function App() {
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('pointermove', onMove)
       if (onClick) document.removeEventListener('click', onClick)
+      tiltCleanup?.()
       ctx?.revert()
       if (tick) gsap.ticker.remove(tick)
       lenis?.destroy()
@@ -275,9 +321,25 @@ export default function App() {
         <section id="about" className="section">
           <div className="glow g1" data-speed="0.6" />
           <div className="container about-grid">
-            <div className="photo-wrap reveal">
-              <div className="photo spot">
-                {photoSrc ? <img src={photoSrc} alt={config.name} /> : <span className="initials">GC</span>}
+            <div className={`photo-wrap ${photoSrc ? '' : 'reveal'}`}>
+              <div className="photo-frame">
+                <div className="photo">
+                  {photoSrc ? (
+                    <img
+                      className="photo-img"
+                      src={photoSrc}
+                      alt={`Portrait of ${config.name}`}
+                      width="768"
+                      height="1024"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <span className="initials">GC</span>
+                  )}
+                  <span className="photo-tag">
+                    <i className="pulse" /> {config.title}
+                  </span>
+                </div>
               </div>
             </div>
             <div>
@@ -416,27 +478,13 @@ export default function App() {
                 </div>
               ))}
             </div>
-          </div>
-        </section>
 
-        {/* BACKGROUND */}
-        <section className="section">
-          <div className="container">
-            <p className="eyebrow reveal">06 — Background</p>
-            <Title>
-              <Words text="Where I'm coming from." />
-            </Title>
-            <div className="bg-grid" data-stagger>
-              {c.background.map((b) => (
-                <div className="bg-col spot" key={b.heading}>
-                  <p className="kind">{b.heading}</p>
-                  {b.rows.map((r) => (
-                    <div className="bg-row" key={r[0]}>
-                      <strong>{r[0]}</strong>
-                      <span>{r[1]}</span>
-                      {r[2] && <em>{r[2]}</em>}
-                    </div>
-                  ))}
+            <div className="cred reveal">
+              {c.credentials.map((x) => (
+                <div key={x.label}>
+                  <p className="kind">{x.label}</p>
+                  <strong>{x.title}</strong>
+                  <span>{x.detail}</span>
                 </div>
               ))}
             </div>
@@ -446,7 +494,7 @@ export default function App() {
         {/* FAQ */}
         <section id="faq" className="section">
           <div className="container narrow">
-            <p className="eyebrow reveal">07 — FAQ</p>
+            <p className="eyebrow reveal">06 — FAQ</p>
             <Title>
               <Words text="Good questions." />
             </Title>
@@ -473,7 +521,7 @@ export default function App() {
         <section id="contact" className="section contact">
           <div className="glow g3" data-speed="0.5" />
           <div className="container">
-            <p className="eyebrow reveal">08 — Contact</p>
+            <p className="eyebrow reveal">07 — Contact</p>
             <Title>
               <Words text="Let's build your website." />
             </Title>
