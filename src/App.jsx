@@ -416,27 +416,13 @@ export default function App() {
                 </div>
               ))}
             </div>
-          </div>
-        </section>
 
-        {/* BACKGROUND */}
-        <section className="section">
-          <div className="container">
-            <p className="eyebrow reveal">06 — Background</p>
-            <Title>
-              <Words text="Where I'm coming from." />
-            </Title>
-            <div className="bg-grid" data-stagger>
-              {c.background.map((b) => (
-                <div className="bg-col spot" key={b.heading}>
-                  <p className="kind">{b.heading}</p>
-                  {b.rows.map((r) => (
-                    <div className="bg-row" key={r[0]}>
-                      <strong>{r[0]}</strong>
-                      <span>{r[1]}</span>
-                      {r[2] && <em>{r[2]}</em>}
-                    </div>
-                  ))}
+            <div className="cred reveal">
+              {c.credentials.map((x) => (
+                <div key={x.label}>
+                  <p className="kind">{x.label}</p>
+                  <strong>{x.title}</strong>
+                  <span>{x.detail}</span>
                 </div>
               ))}
             </div>
@@ -446,7 +432,7 @@ export default function App() {
         {/* FAQ */}
         <section id="faq" className="section">
           <div className="container narrow">
-            <p className="eyebrow reveal">07 — FAQ</p>
+            <p className="eyebrow reveal">06 — FAQ</p>
             <Title>
               <Words text="Good questions." />
             </Title>
@@ -473,7 +459,7 @@ export default function App() {
         <section id="contact" className="section contact">
           <div className="glow g3" data-speed="0.5" />
           <div className="container">
-            <p className="eyebrow reveal">08 — Contact</p>
+            <p className="eyebrow reveal">07 — Contact</p>
             <Title>
               <Words text="Let's build your website." />
             </Title>
