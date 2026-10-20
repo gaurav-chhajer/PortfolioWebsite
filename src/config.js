@@ -18,5 +18,5 @@ export const config = {
   // CONTACT FORM: free key from https://web3forms.com (see README).
   // Until you paste a real key, the form falls back to opening the
   // visitor's email app with the message pre-filled.
-  web3formsKey: 'YOUR_WEB3FORMS_ACCESS_KEY',
+  web3formsKey: 'c1602318-4c5e-4005-b773-d0635ed44adf',
 }
